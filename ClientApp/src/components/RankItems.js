@@ -17,15 +17,17 @@ export default function RankItems() {
     }, [])
     return (
         <main>
-            { 
-                (items != null)
-                    ? items.map((item) =>
-                        <div>
-                            <h5>{item.title}</h5>
-                            <img id={`item-${item.id}`} src={MovieImageArray.find(o => o.id === item.imageId)?.image}></img>
-                        </div>)
-                : <div>Loading...</div>               
-            }
+            <div className="items-not-ranked">
+             { 
+                    (items != null)
+                        ? items.map((item) =>
+                            <div>
+                                <img className="unranked-cell"  id={`item-${item.id}`} src={MovieImageArray.find(o => o.id === item.imageId)?.image}></img>
+                                <div className="unranked-cell-text">{item.title}</div>
+                             </div>)
+                    : <div>Loading...</div>          
+             }
+             </div>
         </main>
     )
 }
