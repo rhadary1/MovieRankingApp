@@ -17,17 +17,35 @@ namespace RankingApp.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(UserDto dto)
+        public IActionResult Register(RegisterDto dto)
         {
-            var user = Model.User.FromDto(dto);
+            var user = new User
+            {
+                Name = dto.Name,
+                Email = dto.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            };
+
             _userRepository.Create(user); 
             return Ok(user);
         }
 
-        [HttpGet("hello")]
-        public IActionResult Hello(User user)
+        [HttpPost("login")]
+        public IActionResult Register(LoginDto dto)
         {
-            return Ok("success");
+            var user = _userRepository.GetUserByEmail(dto.Email);
+            
+            if (user == null)
+            {
+                return BadRequest("Invalid Credentials");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
+            {
+                return BadRequest("Invalid Credentials");
+            }
+
+            return Ok(user);
         }
     }
 }

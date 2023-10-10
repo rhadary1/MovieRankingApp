@@ -17,5 +17,10 @@ namespace RankingApp.Database
             _context.SaveChanges();
             return user;
         }
+
+        public User GetUserByEmail(string email)
+        {
+            return _context.Users.FirstOrDefault(u => u.Email.Equals(email));
+        }
     }
 }
