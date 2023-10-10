@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RankingApp.Database;
 using RankingApp.Enums;
 using RankingApp.Model;
 
@@ -9,7 +11,15 @@ namespace RankingApp.Controllers
     [Route("[controller]")]
     public class ItemController : ControllerBase
     {
-        public static readonly IEnumerable<Item> Items =
+        private RankedItemContext _dbContext; 
+
+        public ItemController(RankedItemContext context)
+        {
+            _dbContext = context;
+        }
+
+        /*
+        public static readonly IEnumerable<RankedItem> Items =
         new[]
         {
             new Item{Id =1, Title = "The Godfather", ImageId=1, Ranking=0, Type=ItemType.Movie },
@@ -34,11 +44,13 @@ namespace RankingApp.Controllers
             new Item{Id = 20, Title = "The Final Countdown", ImageId=20, Ranking=0, Type=ItemType.Album }
 
         };
+        */
 
         [HttpGet("itemsByType/{type}")]
-        public IEnumerable<Item> Get(string type)
+        public async Task<IEnumerable<RankedItem>> Get(string type)
         {
-            return Items.Where(item => Enum.GetName(typeof(ItemType), item.Type).Equals(type, StringComparison.OrdinalIgnoreCase)); 
+            var items = await _dbContext.RankedItems.ToListAsync(); 
+            return items.Where(item => Enum.GetName(typeof(ItemType), item.Type).Equals(type, StringComparison.OrdinalIgnoreCase)); 
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect } from "react"
 import MovieImageArray from "./MovieImages.js"
-import MovieImageArr from "./MovieImages.js";
 
 export default function RankItems() {
     const [items, setItems] = useState([]); 

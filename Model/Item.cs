@@ -6,7 +6,7 @@ namespace RankingApp.Model
     {
         public int Id { get; set; }
         public int ImageId { get; set; }
-        public string Title { get; set; }
+        public string? Title { get; set; }
         public int Ranking { get; set; }
         public ItemType Type { get; set; }
     }
