@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using RankingApp;
 using RankingApp.Database;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,17 +12,25 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<RankedItemContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<UserContext>(options =>
+              options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 var app = builder.Build();
 
+// init databases
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<RankedItemContext>();
-       DbInitializer.Initialize(context);
+        var rankedItemContext = services.GetRequiredService<RankedItemContext>();
+        var userContext = services.GetRequiredService<UserContext>();
+
+       DbInitializer.Initialize(rankedItemContext, userContext);
     }
     catch (Exception ex)
     {
