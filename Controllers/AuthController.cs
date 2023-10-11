@@ -3,7 +3,6 @@ using RankingApp.Database;
 using RankingApp.Dto;
 using RankingApp.Helpers;
 using RankingApp.Model;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace RankingApp.Controllers
 {
@@ -54,6 +53,26 @@ namespace RankingApp.Controllers
             Response.Cookies.Append("jwt", jwtToken, new CookieOptions { HttpOnly = true });
 
             return Ok(new { message = "success" });    
+        }
+
+        [HttpGet("user")]
+        public IActionResult GetUser()
+        {
+            try
+            {
+                var jwtToken = Request.Cookies["jwt"];
+                var validatedToken = _jwtService.Verify(jwtToken);
+                var userId = int.Parse(validatedToken.Issuer);
+                var user = _userRepository.GetUserById(userId);
+
+                return (user == null)
+                    ? Unauthorized()
+                    : Ok(user);
+            }
+            catch (Exception)
+            {
+                return Unauthorized(); 
+            }
         }
     }
 }

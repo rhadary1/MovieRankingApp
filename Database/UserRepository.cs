@@ -22,5 +22,10 @@ namespace RankingApp.Database
         {
             return _context.Users.FirstOrDefault(u => u.Email.Equals(email));
         }
+
+        public User GetUserById(int id)
+        {
+            return _context.Users.FirstOrDefault(u => u.Id == id);
+        }
     }
 }

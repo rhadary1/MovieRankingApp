@@ -7,5 +7,6 @@ namespace RankingApp.Database
         User Create(User user); 
 
         User GetUserByEmail(string email);
+        User GetUserById(int userId);
     }
 }
