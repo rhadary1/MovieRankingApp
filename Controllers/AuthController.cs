@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RankingApp.Database;
 using RankingApp.Dto;
+using RankingApp.Helpers;
 using RankingApp.Model;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace RankingApp.Controllers
 {
@@ -10,10 +12,12 @@ namespace RankingApp.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly JwtService _jwtService;
 
-        public AuthController(IUserRepository repository) 
+        public AuthController(IUserRepository repository, JwtService jwtService) 
         { 
             _userRepository = repository;   
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
@@ -31,7 +35,7 @@ namespace RankingApp.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Register(LoginDto dto)
+        public IActionResult Login(LoginDto dto)
         {
             var user = _userRepository.GetUserByEmail(dto.Email);
             
@@ -45,7 +49,11 @@ namespace RankingApp.Controllers
                 return BadRequest("Invalid Credentials");
             }
 
-            return Ok(user);
+            var jwtToken = _jwtService.Generate(user.Id); 
+
+            Response.Cookies.Append("jwt", jwtToken, new CookieOptions { HttpOnly = true });
+
+            return Ok(new { message = "success" });    
         }
     }
 }

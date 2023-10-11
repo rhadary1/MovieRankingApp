@@ -3,12 +3,14 @@ using RankingApp;
 using RankingApp.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using RankingApp.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddCors();
 
 builder.Services.AddDbContext<RankedItemContext>(options =>
               options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -18,6 +20,7 @@ builder.Services.AddDbContext<UserContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
@@ -49,6 +52,11 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors(options => options
+    .WithOrigins(new[] { "http://localhost:3000" }) // port 3000 = React
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
 
 
 app.MapControllerRoute(
